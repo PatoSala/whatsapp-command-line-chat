@@ -1,20 +1,47 @@
 const qrcode = require('qrcode-terminal');
 const prompt = require('prompt');
-
 const fs = require('fs');
 const { Client } = require('whatsapp-web.js');
 
-const client = new Client();
-
 let contacts = [];
+const SESSION_FILE_PATH = './session.json';
+const CLIENT_FILE_PATH = './client.json';
+
+let sessionData;
+if(fs.existsSync(SESSION_FILE_PATH)) {
+    sessionData = require(SESSION_FILE_PATH);
+}
+
+const client = new Client({
+    session: sessionData
+});
+
+client.on('authenticated', (session) => {    
+    // Save the session object however you prefer.
+    let sessionObject =  JSON.stringify(session);
+    fs.writeFileSync(SESSION_FILE_PATH, sessionObject);
+    console.log(sessionObject);
+});    
+
 
 client.on('qr', qr => {
     qrcode.generate(qr, { small: true });
+    console.log(qr);
 });
 
 client.on('ready', () => {
-    console.log('Client is ready!');
+    console.log('Client is ready! Welcome ' + client.info.pushname);
     prompt.start();
+});
+
+client.on('message', message => {
+    for (let i = 0; i < contacts.length; i++) {
+        if (message.from == contacts[i].phone) {
+            console.log(contacts[i].name + ': ', message.body);
+        } else {
+            console.log(message.from + ': ', message.body);
+        }
+    }
 });
 
 //phone = result.phone + '@c.us';
@@ -48,7 +75,7 @@ function sendMsg() {
 
         } else if (phone == '/msg') {
             if (contacts.length === 0) {
-                console.log("You don't have any contacts yet. Use '/addContact' to create a new contact or just type a phone numbwe to chat with");
+                console.log("You don't have any contacts yet. Use '/addContact' to create a new contact or just type a phone number to chat with");
                 repeatMsg();
             } else {
                 for (let i = 0; i < contacts.length; i++) {
@@ -73,8 +100,12 @@ function sendMsg() {
                 phone = phone + '@c.us';
                 msg = result.message;
                 client.sendMessage(phone, msg);
+                console.log(client.info.pushname + ': ', msg);
                 repeatMsg();
             });
+        } else if (phone == '/client') {
+            console.log(client);
+            repeatMsg();
         } else {
             console.log("That's not an existing command. Try '/help'");
             repeatMsg();
@@ -87,15 +118,5 @@ sendMsg();
 function repeatMsg() {
     sendMsg();
 }
-
-client.on('message', message => {
-    for (let i = 0; i < contacts.length; i++) {
-        if (message.from == contacts[i].phone) {
-            console.log(contacts[i].name + ': ', message.body);
-        } else {
-            console.log(message.from, message.body);
-        }
-    }
-});
 
 client.initialize();

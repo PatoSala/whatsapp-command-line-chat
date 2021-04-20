@@ -24,3 +24,4 @@ You can use certain commands by typing them in the ```phone``` prompt:
 - /contacts --> Displays a list of your saved contacts.  
 - /addContact --> Adds a contact.  
 - /msg --> Send message to a number in your contacts list by typing their name.  
+- /client --> Shows client info. 
