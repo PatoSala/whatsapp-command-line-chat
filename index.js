@@ -7,21 +7,21 @@ let contacts = [];
 const SESSION_FILE_PATH = './session.json';
 const CLIENT_FILE_PATH = './client.json';
 
-let sessionData;
+/* let sessionData;
 if(fs.existsSync(SESSION_FILE_PATH)) {
     sessionData = require(SESSION_FILE_PATH);
-}
+} */
 
-const client = new Client({
+const client = new Client(/* {
     session: sessionData
-});
+} */);
 
-client.on('authenticated', (session) => {    
+/* client.on('authenticated', (session) => {    
     // Save the session object however you prefer.
     let sessionObject =  JSON.stringify(session);
     fs.writeFileSync(SESSION_FILE_PATH, sessionObject);
     console.log(sessionObject);
-});    
+});     */
 
 
 client.on('qr', qr => {
