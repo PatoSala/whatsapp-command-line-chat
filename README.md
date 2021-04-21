@@ -3,7 +3,7 @@ Send and recieve WhatsApp messages through the command line.
 
 ## Step 1
 Before cloneing the repo use:  
-&nbsp;``` cd wpp-command-line-chat ```  
+&nbsp;``` cd whatsapp-command-line-chat ```  
 &nbsp;``` npm install ```  
 &nbsp;``` node index.js ```
 
